@@ -1,22 +1,26 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { BookService } from '../book-service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { signal } from '@angular/core';
+import { Book } from '../books.model';
+import { Button } from 'primeng/button';
+import { Card } from 'primeng/card';
+import { Tag } from 'primeng/tag';
 
 
 @Component({
   selector: 'app-books-list',
-  imports: [],
   templateUrl: './books-list.html',
-  styleUrl: './books-list.scss',
+  styleUrls: ['./books-list.scss'],
+  imports: [Button, Card, Tag]
 })
 export class BooksList {
-  bookService = inject(BookService)
-  books = toSignal(this.bookService.getBooks(), { initialValue: [] })
-
+  bookService = inject(BookService);
+  books = signal<Book[]>([]);
   constructor() {
-    
-    console.log("this.books:", this.books());
-  }
+    this.bookService.getBooks().subscribe((books) => {
+      console.log(books);
+      this.books.set(books);
+    });
 
-
+}
 }
